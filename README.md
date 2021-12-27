@@ -2,8 +2,16 @@
 
 
 ## Table of contents
- * [SPDX-License-Identifier](#SPDX-License-Identifier)
- * [Pragma](#pragma)
+ * [SPDX License Identifier](#SPDX-License-Identifier)
+ * [Pragma](#Pragma)
+ * [Data Types](#Data-Types)
+    + [Boolean](#Boolean)
+    + [Integer](#Integer)
+    + [Address](#Address)
+    + [Array]()
+    + [Enum]()
+    + [Struct](#Struct)
+    + [Mapping](#Mapping)
 
 
 
@@ -20,3 +28,53 @@ More information about how to use SPDX license identifiers can be found at the [
  The `pragma` keyword is used to enable certain compiler features or checks. 
  The version pragma is used as follows: `pragma solidity >=0.4.22 <0.9.0;`
   A source file with the line above does not compile with a compiler earlier than version 0.4.22, and it also does not work on a compiler starting from version 0.9.0 (). Because there will be no breaking changes until version 0.9.0, you can be sure that your code compiles the way you intended. The exact version of the compiler is not fixed, so that bugfix releases are still possible.
+
+## Data Types
+### Boolean
+  
+    `bool`: The possible values are constants `true` and `false`.
+
+`bool public boo = true;`
+
+### Integer
+`int` / `uint`: Signed and unsigned integers of various sizes. Keywords `uint8` to `uint256` in steps of 8 (unsigned of 8 up to 256 bits) and `int8` to `int256`. 
+ 
+ **Default**: 
+ 
+`uint` and `int` are aliases for `uint256` and `int256`, respectively.
+
+**Unsigned** : uint8 | uint16 | uint32 | uint64 | uint128 | uint256(uint)
+
+**Signed** : int8 | int16 | int32 | int64 | int128 | int256(int)
+
+uint stands for unsigned integer, meaning non negative integers, different sizes are available
+  - uint8   ranges from 0 to 2 ** 8 - 1
+  - uint16  ranges from 0 to 2 ** 16 - 1
+  - uint32  ranges from 0 to 2 ** 32 - 1
+  - uint64  ranges from 0 to 2 ** 64 - 1
+  - uint128  ranges from 0 to 2 ** 128 - 1
+  - uint256 ranges from 0 to 2 ** 256 - 1
+
+  ### example:
+  uint8 public u8 = 1;
+
+  uint public u256 = 456;
+
+  uint public u = 123; // uint is an alias for uint256
+
+Negative numbers are allowed for int types. Like uint, different ranges are available from int8 to int256
+    
+  - int256 ranges from -2 ** 255 to 2 ** 255 - 1
+  - int128 ranges from -2 ** 127 to 2 ** 127 - 1 
+
+  ### example: 
+  int8 public i8 = -1;
+
+  int public i256 = 456;
+
+  int public i = -123;  // int is same as int256
+
+  **minimum and maximum of int**
+
+    int public minInt = type(int).min;
+    int public maxInt = type(int).max;
