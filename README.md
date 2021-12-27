@@ -55,7 +55,8 @@ uint stands for unsigned integer, meaning non negative integers, different sizes
   - uint128  ranges from 0 to 2 ** 128 - 1
   - uint256 ranges from 0 to 2 ** 256 - 1
 
-  ### example:
+   **example**
+
   uint8 public u8 = 1;
 
   uint public u256 = 456;
@@ -67,7 +68,8 @@ Negative numbers are allowed for int types. Like uint, different ranges are avai
   - int256 ranges from -2 ** 255 to 2 ** 255 - 1
   - int128 ranges from -2 ** 127 to 2 ** 127 - 1 
 
-  ### example: 
+  **example**:
+
   int8 public i8 = -1;
 
   int public i256 = 456;
@@ -94,7 +96,9 @@ Negative numbers are allowed for int types. Like uint, different ranges are avai
   ```
 
    - `address` payable: Same as address, but with the additional members **transfer** and **send**.
-  ### Methods:
+
+  #### **Methods**
+
   **balance**
   
   `<address>.balance (uint256)`: balance of the Address in Wei
@@ -104,3 +108,56 @@ Negative numbers are allowed for int types. Like uint, different ranges are avai
   - `<address>.send(uint256 amount) returns (bool)`: send given amount of Wei to Address, returns false on failure
 
    The idea behind this distinction is that `address payable` is an address you can send Ether to, while a plain address cannot be sent Ether.
+  ### Array
+
+  Arrays can be dynamic or have a fixed size.
+
+  `uint[7]`: fixed-sized byte arrays.
+
+  `uint[]`: dynamically-sized byte arrays.
+
+  ### Enum
+
+  Solidity supports enumerables and they are useful to model choice and keep track of state.
+  Enums can be declared outside of a contract.
+
+  **Enum representing shipping status**
+
+  ```sh 
+  enum Status {
+        Pending,
+        Shipped,
+        Accepted,
+        Rejected,
+        Canceled
+  }
+```
+  ### Struct
+
+You can define your own type by creating a `struct`.
+
+They are useful for grouping together related data.
+
+Structs can be declared outside of a contract and imported in another contract.
+
+```sh
+struct Todo {
+        string text;
+        bool completed;
+    }
+Todo todos;
+```
+### Mapping
+
+Mapping in Solidity acts like a hash table or dictionary in any other language
+Maps are created with the syntax 
+
+`mapping(key => value) <access specifier> <name>;`
+
+`key` can be value types such as `uint, address or bytes` except for a `mapping`, a `dynamically sized array`, a `contract`, an `enum`, or a `struct`.
+
+`value` can be any type including another mapping or an array.
+
+ // Mapping from address to uint
+
+`mapping(address => uint) public myMap;`
