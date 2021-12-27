@@ -12,7 +12,11 @@
     + [Enum](#Enum)
     + [Struct](#Struct)
     + [Mapping](#Mapping)
-
+ * [Variables](#Variables)
+    + [Local](#Local)
+    + [State](#State)
+    + [Global](#Global)
+ * [Constants](#Constants)
 
 
 ## SPDX-License-Identifier
@@ -161,3 +165,47 @@ Maps are created with the syntax
  // Mapping from address to uint
 
 `mapping(address => uint) public myMap;`
+
+### Variables
+
+There are 3 types of variables in Solidity
+ - **Local**
+    + declared inside a function
+    + not stored on the blockchain 
+ - **State**
+    + declared outside a function
+    + stored on the blockchain
+
+ - **Global**(provides information about the blockchain)
+
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract Variables {
+    // State variables are stored on the blockchain.
+    string public text = "Hello";
+    uint public num = 123;
+
+    function doSomething() public {
+        // Local variables are not saved to the blockchain.
+        uint i = 456;
+
+        // Here are some global variables
+        uint timestamp = block.timestamp; // Current block timestamp
+        address sender = msg.sender; // address of the caller
+    }
+}
+```
+### Constants
+
+Constants are variables that cannot be modified.
+
+Their value is hard coded and using constants can save gas cost.
+
+***coding convention to uppercase constant variables***
+
+```sh
+address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+uint public constant MY_UINT = 123;
+```
