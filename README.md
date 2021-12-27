@@ -8,8 +8,8 @@
     + [Boolean](#Boolean)
     + [Integer](#Integer)
     + [Address](#Address)
-    + [Array]()
-    + [Enum]()
+    + [Array](#Array)
+    + [Enum](#Enum)
     + [Struct](#Struct)
     + [Mapping](#Mapping)
 
@@ -32,7 +32,7 @@ More information about how to use SPDX license identifiers can be found at the [
 ## Data Types
 ### Boolean
   
-    `bool`: The possible values are constants `true` and `false`.
+  `bool`: The possible values are constants `true` and `false`.
 
 `bool public boo = true;`
 
@@ -72,9 +72,35 @@ Negative numbers are allowed for int types. Like uint, different ranges are avai
 
   int public i256 = 456;
 
-  int public i = -123;  // int is same as int256
+  int public i = -123;     // int is same as int256
 
   **minimum and maximum of int**
 
     int public minInt = type(int).min;
     int public maxInt = type(int).max;
+
+  **Fixed Point Numbers**
+
+  Fixed point numbers are not fully supported by Solidity yet. They can be declared, but cannot be assigned to or from.
+  `fixed` / `ufixed`: Signed and unsigned fixed point number of various sizes.
+
+  ### Address
+
+  The address type comes in two flavours, which are largely identical:
+   - `address`: Holds a **20** byte value (size of an Ethereum address).
+
+  ```sh
+    address public addr = 0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c;
+  ```
+
+   - `address` payable: Same as address, but with the additional members **transfer** and **send**.
+  ### Methods:
+  **balance**
+  
+  `<address>.balance (uint256)`: balance of the Address in Wei
+
+  **Transfer and Send**
+  - `<address>.transfer(uint256 amount)`: send given amount of Wei to Address, throws on failure
+  - `<address>.send(uint256 amount) returns (bool)`: send given amount of Wei to Address, returns false on failure
+
+   The idea behind this distinction is that `address payable` is an address you can send Ether to, while a plain address cannot be sent Ether.
