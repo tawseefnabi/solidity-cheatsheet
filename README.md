@@ -19,15 +19,12 @@
     + [Global](#Global)
  * [Constants](#Constants)
  * [Functions](#Functions)
+    + [Access Modifiers](#Access-Modifiers)
+    + [Parameters](#Parameters)
+      - [Input Paramters](#Input-Parameters)
+      - [Output Parameters](#Output-Parameters)
+      
  * [Control Structures](#Control-Structures)
-    + [If](#If)
-    + [For](#For)
-    + [While](#While)
-    + [Do-While](#Do-While)
-    + [Switch](#Switch)
-    + [Break](#Break)
-    + [Continue](#Continue)
-    + [Return](#Return)
 
 ## SPDX-License-Identifier
   the Solidity compiler encourages the use of machine-readable SPDX license identifiers.Every source file should start with a comment indicating its license:
@@ -89,6 +86,13 @@ import "https://github.com/owner/repo/blob/branch/path/to/Contract.sol";
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.3/contracts/cryptography/ECDSA.sol
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.3/contracts/cryptography/ECDSA.sol";
 
+```
+```sh
+import "filename";
+
+import * as symbolName from "filename"; or import "filename" as symbolName;
+
+import {symbol1 as alias, symbol2} from "filename";
 ```
 ## Data Types
 ### Boolean
@@ -266,3 +270,86 @@ Their value is hard coded and using constants can save gas cost.
 address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
 uint public constant MY_UINT = 123;
 ```
+
+### Functions
+There are several ways to return outputs from a function.
+
+Public functions cannot accept certain data types as inputs or outputs
+```sh
+function function_name(<parameter types>) {internal|external|public|private} [pure|constant|view|payable] [returns (<return types>)]
+```
+### Access-Modifiers
+
+- `public` - Accessible from this contract, inherited contracts and externally
+- `private` - Accessible only from this contract
+- `internal` - Accessible only from this contract and contracts inheriting from it
+- `external` - Cannot be accessed internally, only externally. Recommended to reduce gas. Access internally with this.f
+
+The visibility specifier is given after the type for state variables and between parameter list and return parameter list for functions.
+```sh
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.4.16 <0.9.0;
+
+contract C {
+    uint private data;
+
+    function f(uint a) private pure returns(uint b) { return a + 1; }
+    function setData(uint a) public { data = a; }
+    function getData() public view returns(uint) { return data; }
+    function compute(uint a, uint b) internal pure returns (uint) { return a + b; }
+}
+
+// This will not compile
+contract D {
+    function readData() public {
+        C c = new C();
+        uint local = c.f(7); // error: member `f` is not visible
+        c.setData(3);
+        local = c.getData();
+        local = c.compute(3, 5); // error: member `compute` is not visible
+    }
+}
+
+contract E is C {
+    function g() public {
+        C c = new C();
+        uint val = compute(3, 5); // access to internal member (from derived to parent contract)
+    }
+}
+```
+
+### Parameters
+### Input-Parameters
+
+Parameters are declared just like variables and are memory variables.
+
+`function f(uint _a, uint _b) {}`
+
+### Output-Parameters
+
+Output parameters are declared after the returns keyword.
+
+`function f(uint _a, uint _b) returns (uint _sum) {
+   _sum = _a + _b;
+}`
+
+
+Output can also be specified using return statement. In that case, we can omit parameter name returns (uint).
+
+Multiple return types are possible with return (v0, v1, ..., vn).
+
+### Control-Structures
+  Most of the control structures known from curly-braces languages are available in Solidity except for switch and goto.
+
++ if else
++ while
++ do
++ for
++ break
++ continue
++ return
++ ? :
+
+**Try-Catch**
+
+ `try / catch` can only catch errors from external function calls and contract creation.
