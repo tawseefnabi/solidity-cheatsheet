@@ -4,6 +4,7 @@
 ## Table of contents
  * [SPDX License Identifier](#SPDX-License-Identifier)
  * [Pragma](#Pragma)
+ *[Import](#Import)
  * [Data Types](#Data-Types)
     + [Boolean](#Boolean)
     + [Integer](#Integer)
@@ -17,7 +18,16 @@
     + [State](#State)
     + [Global](#Global)
  * [Constants](#Constants)
-
+ * [Functions](#Functions)
+ * [Control Structures](#Control-Structures)
+    + [If](#If)
+    + [For](#For)
+    + [While](#While)
+    + [Do-While](#Do-While)
+    + [Switch](#Switch)
+    + [Break](#Break)
+    + [Continue](#Continue)
+    + [Return](#Return)
 
 ## SPDX-License-Identifier
   the Solidity compiler encourages the use of machine-readable SPDX license identifiers.Every source file should start with a comment indicating its license:
@@ -33,6 +43,53 @@ More information about how to use SPDX license identifiers can be found at the [
  The version pragma is used as follows: `pragma solidity >=0.4.22 <0.9.0;`
   A source file with the line above does not compile with a compiler earlier than version 0.4.22, and it also does not work on a compiler starting from version 0.9.0 (). Because there will be no breaking changes until version 0.9.0, you can be sure that your code compiles the way you intended. The exact version of the compiler is not fixed, so that bugfix releases are still possible.
 
+## Import
+  You can import local and external files in Solidity.
+  ### **Local**
+  The import directive is used to import a local file.
+
+  ```sh
+  ├── Import.sol
+└── Foo.sol
+  ```
+  Fool.sol
+  ```sh
+  // SPDX-License-Identifier: MIT
+  pragma solidity ^0.8.10;
+
+contract Foo {
+    string public name = "Foo";
+}
+  ```
+import.sol
+```sh
+  // SPDX-License-Identifier: MIT
+  pragma solidity ^0.8.10;
+  // import Foo.sol from current directory
+import "./Foo.sol";
+
+contract Import {
+    // Initialize Foo.sol
+    Foo public foo = new Foo();
+
+    // Test Foo.sol by getting it's name.
+    function getFooName() public view returns (string memory) {
+        return foo.name();
+    }
+}
+```
+
+### **External**
+You can also import from **GitHub** by simply copying the url
+```sh
+// https://github.com/owner/repo/blob/branch/path/to/Contract.sol
+import "https://github.com/owner/repo/blob/branch/path/to/Contract.sol";
+
+// Example import ECDSA.sol from openzeppelin-contract repo, release-v3.3 branch
+// https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.3/contracts/cryptography/ECDSA.sol
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v3.3/contracts/cryptography/ECDSA.sol";
+
+```
 ## Data Types
 ### Boolean
   
