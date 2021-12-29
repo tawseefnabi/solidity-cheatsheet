@@ -4,7 +4,8 @@
 ## Table of contents
  * [SPDX License Identifier](#SPDX-License-Identifier)
  * [Pragma](#Pragma)
- *[Import](#Import)
+ * [Import](#Import)
+ * [Ether and Wei](#Ether-and-Wei)
  * [Data Types](#Data-Types)
     + [Boolean](#Boolean)
     + [Integer](#Integer)
@@ -18,13 +19,25 @@
     + [State](#State)
     + [Global](#Global)
  * [Constants](#Constants)
+ * [Immutable](#Immutable)
  * [Functions](#Functions)
     + [Access Modifiers](#Access-Modifiers)
     + [Parameters](#Parameters)
       - [Input Paramters](#Input-Parameters)
       - [Output Parameters](#Output-Parameters)
-      
+ * [Constructors](#)Constructors)
+ * [View](#View)
+ * [Constant](#Constant) 
+ * [Pure Functions](Pure-Functions)
+ * [Payable-Functions](#Payable-Functions)
+ * [Modifiers](#Modifiers) 
  * [Control Structures](#Control-Structures)
+ * [Try-Catch](#Try-Catch)
+ * [Events](#Events)
+ * [Inheritance](#Inheritance)
+ * [Virtual](#Virtual)
+ * [Override](#Override)
+
 
 ## SPDX-License-Identifier
   the Solidity compiler encourages the use of machine-readable SPDX license identifiers.Every source file should start with a comment indicating its license:
@@ -93,6 +106,26 @@ import "filename";
 import * as symbolName from "filename"; or import "filename" as symbolName;
 
 import {symbol1 as alias, symbol2} from "filename";
+```
+
+### Ether and Wei
+Transactions are paid with `ether`.
+
+Similar to how one dollar is equal to 100 cent, one `ether` is equal to 10**18 wei.
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract EtherUnits {
+    uint public oneWei = 1 wei;
+    // 1 wei is equal to 1
+    bool public isOneWei = 1 wei == 1;
+
+    uint public oneEther = 1 ether;
+    // 1 ether is equal to 10^18 wei
+    bool public isOneEther = 1 ether == 1e18;
+}
+
 ```
 ## Data Types
 ### Boolean
@@ -258,6 +291,32 @@ contract Variables {
     }
 }
 ```
+
+**Reading and Writing to a State Variable**
+
+To write or update a state variable you need to send a transaction.
+
+On the other hand, you can read state variables, for free, without any transaction fee.
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract SimpleStorage {
+    // State variable to store a number
+    uint public num;
+
+    // You need to send a transaction to write to a state variable.
+    function set(uint _num) public {
+        num = _num;
+    }
+
+    // You can read from a state variable without sending a transaction.
+    function get() public view returns (uint) {
+        return num;
+    }
+}
+
+```
 ### Constants
 
 Constants are variables that cannot be modified.
@@ -269,6 +328,53 @@ Their value is hard coded and using constants can save gas cost.
 ```sh
 address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
 uint public constant MY_UINT = 123;
+```
+
+### Immutable
+
+Immutable variables are like constants. Values of immutable variables can be set inside the constructor but cannot be modified afterwards.
+
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract Immutable {
+    // coding convention to uppercase constant variables
+    address public immutable MY_ADDRESS;
+    uint public immutable MY_UINT;
+
+    constructor(uint _myUint) {
+        MY_ADDRESS = msg.sender;
+        MY_UINT = _myUint;
+    }
+}
+
+```
+**Immutable vs Constant**
+Both `immutable` and `constant` are keywords that can be used on state variables to restrict modifications to their state. The difference is that `constant` variables can never be changed after compilation, while `immutable` variables can be set within the constructor.
+State variables can be declared as `constant` or `immutable`. In both cases, the variables cannot be modified after the contract has been constructed. For `constant` variables, the value has to be fixed at compile-time, while for `immutable`, it can still be assigned at construction time.
+
+```sh
+pragma solidity >0.6.4 <0.7.0;
+
+contract C {
+    uint constant X = 32**22 + 8;
+    string constant TEXT = "abc";
+    bytes32 constant MY_HASH = keccak256("abc");
+    uint immutable decimals;
+    uint immutable maxBalance;
+    address immutable owner = msg.sender;
+
+    constructor(uint _decimals, address _reference) public {
+        decimals = _decimals;
+        // Assignments to immutables can even access the environment.
+        maxBalance = _reference.balance;
+    }
+
+    function isBalanceTooHigh(address _other) public view returns (bool) {
+        return _other.balance > maxBalance;
+    }
+}
 ```
 
 ### Functions
@@ -399,8 +505,10 @@ contract E is X, Y {
 ```
 If there is no constructor, the contract will assume the default constructor, which is equivalent to `constructor() {}`.
 
-### View, Constant and Pure Functions
-### Payable Functions
+### View 
+### Constant 
+### Pure-Functions
+### Payable-Functions
 
 ### Modifiers 
 
@@ -464,10 +572,11 @@ they can be used for:
 + return
 + ? :
 
-**Try-Catch**
+### Try-Catch
 
  `try / catch` can only catch errors from external function calls and contract creation.
 
+### Events
 ### Inheritance
 
 Solidity supports multiple inheritance. Contracts can inherit other contract by using the is keyword.
