@@ -338,6 +338,60 @@ Output can also be specified using return statement. In that case, we can omit p
 
 Multiple return types are possible with return (v0, v1, ..., vn).
 
+### Constructors
+### View, Constant and Pure Functions
+### Payable Functions
+
+### Modifiers 
+
+Modifiers can be used to change the behaviour of functions in a declarative way. For example, you can use a modifier to automatically check a condition prior to executing the function.
+they can be used for:
+ - Restrict  access
+ - Validate inputs
+ - Guard against reentrancy hack
+
+ ```sh
+
+  // Modifier to check that the caller is the owner of
+  // the contract
+
+ modifier onlyOwner {
+    require(msg.sender == owner);
+      // Underscore is a special character only used inside
+      // a function modifier and it tells Solidity to
+      // execute the rest of the code.
+    _;
+  }
+
+  // Modifiers can take inputs. This modifier checks that the
+  // address passed in is not the zero address.
+
+  modifier validAddress(address _addr) {
+        require(_addr != address(0), "Not valid address");
+        _;
+    }
+
+  function changeOwner(address _newOwner) public onlyOwner validAddress(_newOwner) {
+        owner = _newOwner;
+    }
+
+  // Modifiers can be called before and / or after a function.
+  // This modifier prevents a function from being called while
+  // it is still executing.
+  modifier noReentrancy() {
+    require(!locked, "No reentrancy");
+      locked = true;
+      _;
+      locked = false;
+  }
+
+  function decrement(uint i) public noReentrancy {
+    x -= i;
+    if (i > 1) {
+      decrement(i - 1);
+    }
+  }
+ ```
 ### Control-Structures
   Most of the control structures known from curly-braces languages are available in Solidity except for switch and goto.
 
@@ -353,3 +407,83 @@ Multiple return types are possible with return (v0, v1, ..., vn).
 **Try-Catch**
 
  `try / catch` can only catch errors from external function calls and contract creation.
+
+### Inheritance
+
+Solidity supports multiple inheritance. Contracts can inherit other contract by using the is keyword.
+
+Function that is going to be overridden by a child contract must be declared as `virtual`.
+
+Function that is going to override a parent function must use the keyword `override`.
+
+Order of inheritance is important.
+
+You have to list the parent contracts in the order from “most base-like” to “most derived”.
+
+```sh
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+/* Graph of inheritance
+    A
+   / \
+  B   C
+ / \ /
+F  D,E
+
+*/
+
+contract A {
+    function foo() public pure virtual returns (string memory) {
+        return "A";
+    }
+}
+
+// Contracts inherit other contracts by using the keyword 'is'.
+contract B is A {
+    // Override A.foo()
+    function foo() public pure virtual override returns (string memory) {
+        return "B";
+    }
+}
+
+contract C is A {
+    // Override A.foo()
+    function foo() public pure virtual override returns (string memory) {
+        return "C";
+    }
+}
+
+// Contracts can inherit from multiple parent contracts.
+// When a function is called that is defined multiple times in
+// different contracts, parent contracts are searched from
+// right to left, and in depth-first manner.
+
+contract D is B, C {
+    // D.foo() returns "C"
+    // since C is the right most parent contract with function foo()
+    function foo() public pure override(B, C) returns (string memory) {
+        return super.foo();
+    }
+}
+
+contract E is C, B {
+    // E.foo() returns "B"
+    // since B is the right most parent contract with function foo()
+    function foo() public pure override(C, B) returns (string memory) {
+        return super.foo();
+    }
+}
+
+// Inheritance must be ordered from “most base-like” to “most derived”.
+// Swapping the order of A and B will throw a compilation error.
+contract F is A, B {
+    function foo() public pure override(A, B) returns (string memory) {
+        return super.foo();
+    }
+}
+```
+
+### Virtual
+### Override
