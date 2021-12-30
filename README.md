@@ -33,6 +33,7 @@
  * [Modifiers](#Modifiers) 
  * [Control Structures](#Control-Structures)
  * [Try-Catch](#Try-Catch)
+ * [require](#require)
  * [Events](#Events)
  * [Inheritance](#Inheritance)
  * [Virtual](#Virtual)
@@ -575,6 +576,11 @@ they can be used for:
 ### Try-Catch
 
  `try / catch` can only catch errors from external function calls and contract creation.
+### require
+`require(bool condition)`: throws if the condition is not met - to be used for errors in inputs or external components
+```sh
+ require(msg.value % 2 == 0); // Only allow even numbers
+```
 
 ### Events
 ### Inheritance
