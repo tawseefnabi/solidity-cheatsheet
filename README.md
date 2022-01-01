@@ -20,12 +20,16 @@
     + [Global](#Global)
  * [Constants](#Constants)
  * [Immutable](#Immutable)
+ * [Data Locations - Storage, Memory and Calldata](#Data-Locations-Storage-Memory-and-Calldata)
+    + [Storage](#Storage)
+    + [Memory](#Memory)
+    + [Calldata](#Calldata)
  * [Functions](#Functions)
     + [Access Modifiers](#Access-Modifiers)
     + [Parameters](#Parameters)
       - [Input Paramters](#Input-Parameters)
       - [Output Parameters](#Output-Parameters)
- * [Constructors](#)Constructors)
+ * [Constructors](#Constructors)
  * [View](#View)
  * [Constant](#Constant) 
  * [Pure Functions](Pure-Functions)
@@ -379,6 +383,55 @@ contract C {
 }
 ```
 
+### Data Locations - Storage, Memory and Calldata
+
+Variables are declared as either `storage`, `memory` or `calldata` to explicitly specify the location of the data.
+
+`storage` - variable is a state variable (store on blockchain)
+`memory` - variable is in memory and it exists while a function is being called
+`calldata` - special data location that contains function arguments, only available for external functions
+
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract DataLocations {
+    uint[] public arr;
+    mapping(uint => address) map;
+    struct MyStruct {
+        uint foo;
+    }
+    mapping(uint => MyStruct) myStructs;
+
+    function f() public {
+        // call _f with state variables
+        _f(arr, map, myStructs[1]);
+
+        // get a struct from a mapping
+        MyStruct storage myStruct = myStructs[1];
+        // create a struct in memory
+        MyStruct memory myMemStruct = MyStruct(0);
+    }
+
+    function _f(
+        uint[] storage _arr,
+        mapping(uint => address) storage _map,
+        MyStruct storage _myStruct
+    ) internal {
+        // do something with storage variables
+    }
+
+    // You can return memory variables
+    function g(uint[] memory _arr) public returns (uint[] memory) {
+        // do something with memory array
+    }
+
+    function h(uint[] calldata _arr) external {
+        // do something with calldata array
+    }
+}
+
+```
 ### Functions
 There are several ways to return outputs from a function.
 
@@ -730,6 +783,68 @@ contract Error {
 ### Try-Catch
 
  `try / catch` can only catch errors from external function calls and contract creation.
+
+ ```sh
+ // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+// External contract used for try / catch examples
+contract Foo {
+    address public owner;
+
+    constructor(address _owner) {
+        require(_owner != address(0), "invalid address");
+        assert(_owner != 0x0000000000000000000000000000000000000001);
+        owner = _owner;
+    }
+
+    function myFunc(uint x) public pure returns (string memory) {
+        require(x != 0, "require failed");
+        return "my func was called";
+    }
+}
+
+contract Bar {
+    event Log(string message);
+    event LogBytes(bytes data);
+
+    Foo public foo;
+
+    constructor() {
+        // This Foo contract is used for example of try catch with external call
+        foo = new Foo(msg.sender);
+    }
+
+    // Example of try / catch with external call
+    // tryCatchExternalCall(0) => Log("external call failed")
+    // tryCatchExternalCall(1) => Log("my func was called")
+    function tryCatchExternalCall(uint _i) public {
+        try foo.myFunc(_i) returns (string memory result) {
+            emit Log(result);
+        } catch {
+            emit Log("external call failed");
+        }
+    }
+
+    // Example of try / catch with contract creation
+    // tryCatchNewContract(0x0000000000000000000000000000000000000000) => Log("invalid address")
+    // tryCatchNewContract(0x0000000000000000000000000000000000000001) => LogBytes("")
+    // tryCatchNewContract(0x0000000000000000000000000000000000000002) => Log("Foo created")
+    function tryCatchNewContract(address _owner) public {
+        try new Foo(_owner) returns (Foo foo) {
+            // you can use variable foo here
+            emit Log("Foo created");
+        } catch Error(string memory reason) {
+            // catch failing revert() and require()
+            emit Log(reason);
+        } catch (bytes memory reason) {
+            // catch failing assert()
+            emit LogBytes(reason);
+        }
+    }
+}
+
+ ```
 ### require
 `require(bool condition)`: throws if the condition is not met - to be used for errors in inputs or external components
 ```sh
