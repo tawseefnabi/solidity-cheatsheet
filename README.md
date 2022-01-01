@@ -32,6 +32,7 @@
  * [Payable-Functions](#Payable-Functions)
  * [Modifiers](#Modifiers) 
  * [Control Structures](#Control-Structures)
+ * [Error Handling](#error-hadling)
  * [Try-Catch](#Try-Catch)
  * [require](#require)
  * [Events](#Events)
@@ -641,6 +642,90 @@ they can be used for:
 + continue
 + return
 + ? :
+
+### Error Handling
+
+Solidity uses state-reverting exceptions to handle errors. Such an exception undoes all changes made to the state in the current call (and all its sub-calls) and flags an error to the caller. Exceptions can contain `error` data that is passed back to the caller in the form of error instances. The built-in errors **Error**(string) and **Panic**(uint256) are used by special functions. 
+
+
+**Error** is used for *regular* error conditions while **Panic** is used for errors that should not be present in bug-free code.
+
+An `error` will undo all changes made to the state during a transaction.
+
+You can throw an `error` by calling `require`, `revert` or `assert`.
+
+`require` is used to validate inputs and conditions before execution.
+`revert` is similar to `require`. See the code below for details.
+`assert` is used to check for code that should never be false. Failing `assertion` probably means that there is a bug.
+
+The `require` function either creates an error without any data or an error of type `Error`(string). It should be used to ensure valid conditions that cannot be detected until execution time. This includes conditions on inputs or return values from calls to external contracts.
+
+The `assert` function creates an error of type `Panic`(uint256). The same error is created by the compiler in certain situations as listed below.
+
+Assert should only be used to test for internal errors, and to check invariants. Properly functioning code should never create a `Panic`, not even on invalid external input. If this happens, then there is a bug in your contract which you should fix. Language analysis tools can evaluate your contract to identify the conditions and function calls which will cause a Panic.
+
+
+`assert(bool condition)`
+causes a Panic error and thus state change reversion if the condition is not met - to be used for internal errors.
+
+`require(bool condition)`
+reverts if the condition is not met - to be used for errors in inputs or external components.
+
+`require(bool condition, string memory message)`
+reverts if the condition is not met - to be used for errors in inputs or external components. Also provides an error message.
+
+`revert()`
+abort execution and revert state changes
+
+`revert(string memory reason)`
+abort execution and revert state changes, providing an explanatory string
+
+
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract Error {
+    function testRequire(uint _i) public pure {
+        // Require should be used to validate conditions such as:
+        // - inputs
+        // - conditions before execution
+        // - return values from calls to other functions
+        require(_i > 10, "Input must be greater than 10");
+    }
+
+    function testRevert(uint _i) public pure {
+        // Revert is useful when the condition to check is complex.
+        // This code does the exact same thing as the example above
+        if (_i <= 10) {
+            revert("Input must be greater than 10");
+        }
+    }
+
+    uint public num;
+
+    function testAssert() public view {
+        // Assert should only be used to test for internal errors,
+        // and to check invariants.
+
+        // Here we assert that num is always equal to 0
+        // since it is impossible to update the value of num
+        assert(num == 0);
+    }
+
+    // custom error
+    error InsufficientBalance(uint balance, uint withdrawAmount);
+
+    function testCustomError(uint _withdrawAmount) public view {
+        uint bal = address(this).balance;
+        if (bal < _withdrawAmount) {
+            revert InsufficientBalance({balance: bal, withdrawAmount: _withdrawAmount});
+        }
+    }
+}
+
+```
+### **Panic** via `assert` and **Error** via `require`
 
 ### Try-Catch
 
