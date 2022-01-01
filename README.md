@@ -30,6 +30,7 @@
       - [Input Paramters](#Input-Parameters)
       - [Output Parameters](#Output-Parameters)
  * [Constructors](#Constructors)
+ * [Contracts](#Contracts)
  * [View](#View)
  * [Constant](#Constant) 
  * [Pure Functions](Pure-Functions)
@@ -436,6 +437,8 @@ contract DataLocations {
 There are several ways to return outputs from a function.
 
 Public functions cannot accept certain data types as inputs or outputs
+
+**Structure**
 ```sh
 function function_name(<parameter types>) {internal|external|public|private} [pure|constant|view|payable] [returns (<return types>)]
 ```
@@ -495,9 +498,9 @@ Output parameters are declared after the returns keyword.
 }`
 
 
-Output can also be specified using return statement. In that case, we can omit parameter name returns (uint).
+Output can also be specified using return statement. In that case, we can omit parameter name `returns (uint)`.
 
-Multiple return types are possible with return (v0, v1, ..., vn).
+Multiple return types are possible with `return (v0, v1, ..., vn)`.
 
 ### Constructors
 A constructor is an optional function that is executed upon contract creation.
@@ -778,6 +781,32 @@ contract Error {
 }
 
 ```
+### Contracts
+
+Contracts can be created from another contract using new keyword. The source of the contract has to be known in advance.
+
+```sh
+contract A {
+    function add(uint _a, uint _b) returns (uint) {
+        return _a + _b;
+    }
+}
+
+contract C {
+    address a;
+    function f(uint _a) {
+        a = new A();
+    }
+}
+```
+
+ #### Calling Parent Contracts
+
+ Parent contracts can be called directly, or by using the keyword `super`.
+
+By using the keyword `super`, all of the immediate parent contracts will be called.
+
+
 ### **Panic** via `assert` and **Error** via `require`
 
 ### Try-Catch
@@ -852,6 +881,31 @@ contract Bar {
 ```
 
 ### Events
+
+`Events` allow logging to the Ethereum blockchain. Some use cases for events are:
+
+Listening for `events` and updating user interface
+A cheap form of storage
+
+```sh
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
+contract Event {
+    // Event declaration
+    // Up to 3 parameters can be indexed.
+    // Indexed parameters helps you filter the logs by the indexed parameter
+    event Log(address indexed sender, string message);
+    event AnotherLog();
+
+    function test() public {
+        emit Log(msg.sender, "Hello World!");
+        emit Log(msg.sender, "Hello EVM!");
+        emit AnotherLog();
+    }
+}
+
+```
 ### Inheritance
 
 Solidity supports multiple inheritance. Contracts can inherit other contract by using the is keyword.
