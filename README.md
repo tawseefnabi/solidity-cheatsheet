@@ -20,7 +20,7 @@
     + [Global](#Global)
  * [Constants](#Constants)
  * [Immutable](#Immutable)
- * [Data Locations - Storage, Memory and Calldata](#Data-Locations-Storage-Memory-and-Calldata)
+ * [Data Locations](#Data-Locations-Storage-Memory-and-Calldata)
     + [Storage](#Storage)
     + [Memory](#Memory)
     + [Calldata](#Calldata)
@@ -886,6 +886,7 @@ contract Bar {
 
 Listening for `events` and updating user interface
 A cheap form of storage
+
 
 ```sh
 // SPDX-License-Identifier: MIT
