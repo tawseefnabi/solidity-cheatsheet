@@ -882,6 +882,8 @@ contract Bar {
 
 ### Events
 
+`events` allow the contract to notify other entities (contracts, web3 applications, etc) that something has happened. When you declare an event you can specify at max 3 indexed parameters. When a parameter is declared as indexed it allows 3rd-party apps to filter events for that specific parameter
+
 `Events` allow logging to the Ethereum blockchain. Some use cases for events are:
 
 Listening for `events` and updating user interface
